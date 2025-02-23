@@ -1,101 +1,155 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Flex, Select, Heading, Text, Card, Link, Button, Callout, TextField, Section } from "@radix-ui/themes";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { Address, isAddress } from "viem";
+import { useRouter } from "next/navigation";
+
+type SupportedToken = "USDC" | "USDT";
+
+const STORAGE_KEY = "revolut-offramp-address";
+const REVOLUT_UNIVERSAL_LINK = "https://revolut.com/crypto";
+const SUPPORTED_TOKENS: SupportedToken[] = ["USDC", "USDT"];
+const MIN_DEPOSIT_BY_TOKEN: Record<SupportedToken, number> = {
+  USDC: 5,
+  USDT: 5,
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter();
+  const [address, setAddress] = useState<Address | null>((localStorage.getItem(STORAGE_KEY) as Address) || null);
+  const [token, setToken] = useState<SupportedToken>("USDC");
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const isValidToken = (token: SupportedToken) => {
+    return SUPPORTED_TOKENS.includes(token);
+  };
+
+  useEffect(() => {
+    if (address) {
+      localStorage.setItem(STORAGE_KEY, address);
+    }
+  }, [address]);
+
+  const handleDeposit = () => {
+    if (!address || !isAddress(address)) {
+      setError("Please enter a valid deposit address");
+      return;
+    }
+    if (!isValidToken(token)) {
+      setError("Please select a valid token");
+      return;
+    }
+    const url = `https://yodl.me/${address}?tokens=${token}&chains=137`;
+    router.push(url);
+  };
+
+  const steps = [
+    "Go to 'Crypto' on the bottom menu.",
+    "Tap 'Receive'.",
+    "Select Token (USDT and USDC supported)",
+    "Select Polygon as the network",
+    "Copy the address and paste it below.",
+  ];
+
+  return (
+    <>
+      <Section size='1'>
+        <Card>
+          <Flex direction='column' gap='2'>
+            <Heading as='h2' size='2'>
+              How to find your deposit address:
+            </Heading>
+
+            <Flex direction='column' gap='2' className='text-sm text-gray-300'>
+              <Flex gap='2'>
+                <Text>1. </Text>
+                <Flex gap='2'>
+                  <Text>Open Revolut</Text>
+                  <Button size='1' asChild>
+                    <Link href={REVOLUT_UNIVERSAL_LINK} target='_blank'>
+                      Open App
+                    </Link>
+                  </Button>
+                </Flex>
+              </Flex>
+              {steps.map((step, index) => (
+                <Flex gap='2' key={index}>
+                  <Text>{index + 2}. </Text>
+                  <Text>{step}</Text>
+                </Flex>
+              ))}
+            </Flex>
+            <Callout.Root>
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text>Currently only Polygon is supported.</Callout.Text>
+            </Callout.Root>
+          </Flex>
+        </Card>
+      </Section>
+
+      <Section size='1'>
+        <Card>
+          <Flex direction='column' gap='4'>
+            <Flex direction='column' gap='2'>
+              <Text as='label' size='2' color='gray'>
+                Deposit Address
+              </Text>
+              <Flex direction='column' gap='2'>
+                <TextField.Root value={address || ""} onChange={e => setAddress(e.target.value as Address)} />
+                {address && !isAddress(address) && (
+                  <Callout.Root color='red'>
+                    <Callout.Icon>
+                      <InfoCircledIcon />
+                    </Callout.Icon>
+                    <Callout.Text>Please enter a valid address</Callout.Text>
+                  </Callout.Root>
+                )}
+              </Flex>
+            </Flex>
+
+            <Flex direction='column' gap='2'>
+              <Text as='label' size='2' color='gray'>
+                Token
+              </Text>
+              <Select.Root defaultValue='USDC' value={token} onValueChange={value => setToken(value as SupportedToken)}>
+                <Select.Trigger />
+                <Select.Content>
+                  <Select.Group>
+                    <Select.Item value='USDC'>USDC</Select.Item>
+                    <Select.Item value='USDT'>USDT</Select.Item>
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
+            </Flex>
+
+            {error && (
+              <Callout.Root color='red'>
+                <Callout.Icon>
+                  <InfoCircledIcon />
+                </Callout.Icon>
+                <Callout.Text>{error}</Callout.Text>
+              </Callout.Root>
+            )}
+
+            <Button onClick={handleDeposit} disabled={!address || !token}>
+              Deposit
+            </Button>
+
+            <Callout.Root>
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text>
+                Minimum deposit for {token} is: {MIN_DEPOSIT_BY_TOKEN[token]}
+              </Callout.Text>
+            </Callout.Root>
+          </Flex>
+        </Card>
+      </Section>
+    </>
   );
 }
