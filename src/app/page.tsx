@@ -55,7 +55,7 @@ export default function Home() {
   const steps = [
     "Go to 'Crypto' on the bottom menu.",
     "Tap 'Receive'.",
-    "Select Token (USDT and USDC supported)",
+    "Select Token (USDT or USDC)",
     "Select Polygon as the network",
     "Copy the address and paste it below.",
   ];
@@ -88,15 +88,15 @@ export default function Home() {
                 </Flex>
               ))}
             </Flex>
-            <Callout.Root>
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>Currently only Polygon is supported.</Callout.Text>
-            </Callout.Root>
           </Flex>
         </Card>
       </Section>
+      <Callout.Root>
+        <Callout.Icon>
+          <InfoCircledIcon />
+        </Callout.Icon>
+        <Callout.Text>Currently only Polygon chain is supported.</Callout.Text>
+      </Callout.Root>
 
       <Section size='1'>
         <Card>
@@ -145,18 +145,17 @@ export default function Home() {
             <Button onClick={handleDeposit} disabled={!address || !token}>
               Deposit
             </Button>
-
-            <Callout.Root>
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>
-                Minimum deposit for {token} is: {MIN_DEPOSIT_BY_TOKEN[token]}
-              </Callout.Text>
-            </Callout.Root>
           </Flex>
         </Card>
       </Section>
+      <Callout.Root>
+        <Callout.Icon>
+          <InfoCircledIcon />
+        </Callout.Icon>
+        <Callout.Text>
+          Minimum deposit for {token} is: {MIN_DEPOSIT_BY_TOKEN[token]}
+        </Callout.Text>
+      </Callout.Root>
     </>
   );
 }
