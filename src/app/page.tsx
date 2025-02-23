@@ -18,13 +18,20 @@ const MIN_DEPOSIT_BY_TOKEN: Record<SupportedToken, number> = {
 
 export default function Home() {
   const router = useRouter();
-  const [address, setAddress] = useState<Address | null>((localStorage.getItem(STORAGE_KEY) as Address) || null);
+  const [address, setAddress] = useState<Address | null>(null);
   const [token, setToken] = useState<SupportedToken>("USDC");
   const [error, setError] = useState<string | null>(null);
 
   const isValidToken = (token: SupportedToken) => {
     return SUPPORTED_TOKENS.includes(token);
   };
+
+  useEffect(() => {
+    const savedAddress = localStorage.getItem(STORAGE_KEY) as Address;
+    if (savedAddress) {
+      setAddress(savedAddress);
+    }
+  }, []);
 
   useEffect(() => {
     if (address) {
