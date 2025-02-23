@@ -49,9 +49,11 @@ export default function Home() {
     <>
       <Section size='1'>
         <Heading as='h2' size='2' align='center' className='text-center'>
-          Deposit crypto to your revolut account.
+          <Text size='5' className='bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500'>
+            Send any token on any chain
+          </Text>
           <br />
-          Send any token on any chain and receive USDT or USDC on your Revolut polygon address
+          <Text>Receive USDT or USDC on Revolut</Text>
         </Heading>
       </Section>
       <Section size='1'>
