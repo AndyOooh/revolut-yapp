@@ -1,30 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Flex, Select, Heading, Text, Card, Link, Button, Callout, TextField, Section } from "@radix-ui/themes";
+import { Flex, Heading, Text, Card, Link, Button, Callout, TextField, Section } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Address, isAddress } from "viem";
 import { useRouter } from "next/navigation";
 
-type SupportedToken = "USDC" | "USDT";
-
 const STORAGE_KEY = "revolut-offramp-address";
 const REVOLUT_UNIVERSAL_LINK = "https://revolut.com/crypto";
-const SUPPORTED_TOKENS: SupportedToken[] = ["USDC", "USDT"];
-const MIN_DEPOSIT_BY_TOKEN: Record<SupportedToken, number> = {
-  USDC: 5,
-  USDT: 5,
-};
 
 export default function Home() {
   const router = useRouter();
   const [address, setAddress] = useState<Address | null>(null);
-  const [token, setToken] = useState<SupportedToken>("USDC");
   const [error, setError] = useState<string | null>(null);
-
-  const isValidToken = (token: SupportedToken) => {
-    return SUPPORTED_TOKENS.includes(token);
-  };
 
   useEffect(() => {
     const savedAddress = localStorage.getItem(STORAGE_KEY) as Address;
@@ -44,11 +32,8 @@ export default function Home() {
       setError("Please enter a valid deposit address");
       return;
     }
-    if (!isValidToken(token)) {
-      setError("Please select a valid token");
-      return;
-    }
-    const url = `https://yodl.me/${address}?tokens=${token}&chains=137`;
+
+    const url = `https://yodl.me/${address}?tokens=USDC,USDT&chains=137`;
     router.push(url);
   };
 
@@ -62,6 +47,13 @@ export default function Home() {
 
   return (
     <>
+      <Section size='1'>
+        <Heading as='h2' size='2' align='center' className='text-center'>
+          Deposit crypto to your revolut account.
+          <br />
+          Send any token on any chain and receive USDT or USDC on your Revolut polygon address
+        </Heading>
+      </Section>
       <Section size='1'>
         <Card>
           <Flex direction='column' gap='2'>
@@ -91,12 +83,6 @@ export default function Home() {
           </Flex>
         </Card>
       </Section>
-      <Callout.Root>
-        <Callout.Icon>
-          <InfoCircledIcon />
-        </Callout.Icon>
-        <Callout.Text>Currently only Polygon chain is supported.</Callout.Text>
-      </Callout.Root>
 
       <Section size='1'>
         <Card>
@@ -118,21 +104,6 @@ export default function Home() {
               </Flex>
             </Flex>
 
-            <Flex direction='column' gap='2'>
-              <Text as='label' size='2' color='gray'>
-                Token
-              </Text>
-              <Select.Root defaultValue='USDC' value={token} onValueChange={value => setToken(value as SupportedToken)}>
-                <Select.Trigger />
-                <Select.Content>
-                  <Select.Group>
-                    <Select.Item value='USDC'>USDC</Select.Item>
-                    <Select.Item value='USDT'>USDT</Select.Item>
-                  </Select.Group>
-                </Select.Content>
-              </Select.Root>
-            </Flex>
-
             {error && (
               <Callout.Root color='red'>
                 <Callout.Icon>
@@ -142,20 +113,18 @@ export default function Home() {
               </Callout.Root>
             )}
 
-            <Button onClick={handleDeposit} disabled={!address || !token}>
+            <Button onClick={handleDeposit} disabled={!address}>
               Deposit
             </Button>
+            <Callout.Root>
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text>Minimum deposit is: 5 USDC or USDT</Callout.Text>
+            </Callout.Root>
           </Flex>
         </Card>
       </Section>
-      <Callout.Root>
-        <Callout.Icon>
-          <InfoCircledIcon />
-        </Callout.Icon>
-        <Callout.Text>
-          Minimum deposit for {token} is: {MIN_DEPOSIT_BY_TOKEN[token]}
-        </Callout.Text>
-      </Callout.Root>
     </>
   );
 }
