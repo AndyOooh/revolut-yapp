@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { UAParser } from "ua-parser-js";
 
 const STORAGE_KEY = "revolut-offramp-address";
-const REVOLUT_UNIVERSAL_LINK = "https://revolut.com/crypto";
-const REVOLUT_UNIVERSAL_LINK_MOBILE = "https://revolut.me/crypto";
+const REVOLUT_UNIVERSAL_LINK = "https://revolut.com";
+const REVOLUT_UNIVERSAL_LINK_MOBILE = "https://revolut.me";
 
 export default function Home() {
   const router = useRouter();
