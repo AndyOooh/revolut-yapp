@@ -75,12 +75,7 @@ export default function Home() {
                   <Text>Open Revolut</Text>
                   <Button size='1' asChild>
                     <Link href={isMobile ? REVOLUT_UNIVERSAL_LINK_MOBILE : REVOLUT_UNIVERSAL_LINK} target='_blank'>
-                      Open App 1
-                    </Link>
-                  </Button>
-                  <Button size='1' asChild>
-                    <Link href={REVOLUT_UNIVERSAL_LINK} target='_blank'>
-                      Open App 2
+                      Open App
                     </Link>
                   </Button>
                 </Flex>
