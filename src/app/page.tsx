@@ -9,7 +9,7 @@ import { UAParser } from "ua-parser-js";
 
 const STORAGE_KEY = "revolut-offramp-address";
 const REVOLUT_UNIVERSAL_LINK = "https://revolut.com";
-const REVOLUT_UNIVERSAL_LINK_MOBILE = "https://revolut.me";
+const REVOLUT_UNIVERSAL_LINK_MOBILE = "https://revolut.com/app";
 
 export default function Home() {
   const router = useRouter();
