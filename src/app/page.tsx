@@ -5,20 +5,25 @@ import { Flex, Heading, Text, Card, Link, Button, Callout, TextField, Section } 
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Address, isAddress } from "viem";
 import { useRouter } from "next/navigation";
+import { UAParser } from "ua-parser-js";
 
 const STORAGE_KEY = "revolut-offramp-address";
 const REVOLUT_UNIVERSAL_LINK = "https://revolut.com/crypto";
+const REVOLUT_UNIVERSAL_LINK_MOBILE = "https://revolut.me/crypto";
 
 export default function Home() {
   const router = useRouter();
   const [address, setAddress] = useState<Address | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const savedAddress = localStorage.getItem(STORAGE_KEY) as Address;
     if (savedAddress) {
       setAddress(savedAddress);
     }
+    const parser = new UAParser();
+    setIsMobile(parser.getDevice().type === "mobile");
   }, []);
 
   useEffect(() => {
@@ -69,8 +74,13 @@ export default function Home() {
                 <Flex gap='2'>
                   <Text>Open Revolut</Text>
                   <Button size='1' asChild>
+                    <Link href={isMobile ? REVOLUT_UNIVERSAL_LINK_MOBILE : REVOLUT_UNIVERSAL_LINK} target='_blank'>
+                      Open App 1
+                    </Link>
+                  </Button>
+                  <Button size='1' asChild>
                     <Link href={REVOLUT_UNIVERSAL_LINK} target='_blank'>
-                      Open App
+                      Open App 2
                     </Link>
                   </Button>
                 </Flex>
